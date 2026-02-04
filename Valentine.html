@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Important Question</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Comic Sans MS", Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      max-width: 750px;
+      width: 90%;
+      z-index: 2;
+    }
+
+    h1, h2, p {
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 14px 24px;
+      margin: 10px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    #yesBtn {
+      background: #ff4d6d;
+      color: white;
+      z-index: 10;
+      position: relative;
+    }
+
+    #igBtn {
+      background: #ffd166;
+    }
+
+    /* NAH BUTTON — FIXED AT BOTTOM */
+    #nahBtn {
+      background: #adb5bd;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+    }
+
+    .hidden { display: none; }
+
+    .explode {
+      animation: boom 0.4s forwards;
+    }
+
+    @keyframes boom {
+      to {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
+
+    /* FULL SCREEN YES */
+    .fullscreen-yes {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      font-size: 5vw;
+      border-radius: 0;
+      margin: 0;
+    }
+
+    /* HEART CONFETTI */
+    .heart {
+      position: fixed;
+      top: -10px;
+      animation: fall linear forwards;
+      color: #ff4d6d;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .countdown {
+      font-size: 24px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- INTRO -->
+  <div class="card" id="stage1">
+    <h1>waddup shorty 😏</h1>
+    <p>
+      big days about to come…<br>
+      but before that<br>
+      I need to ask you something.
+    </p>
+    <button onclick="reveal()">click to reveal</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="card hidden" id="stage2">
+    <h2>will you be my valentine 💘</h2>
+
+    <button id="yesBtn" onclick="finalYes()">Yes</button>
+    <button id="igBtn" onclick="igSo()">ig so</button>
+
+    <p id="message"></p>
+  </div>
+
+  <!-- END -->
+  <div class="card hidden" id="stage3">
+    <h1>THANK GOD YOU SAID YES 😮‍💨❤️</h1>
+    <p>cause everyone here wants you</p>
+    <div class="countdown" id="countdown"></div>
+  </div>
+
+  <!-- NAH BUTTON LIVES OUTSIDE -->
+  <button id="nahBtn" class="hidden" onclick="nah()">nah</button>
+
+<script>
+  let nahCount = 0;
+  let yesScale = 1;
+
+  const yesTexts = [
+    "Yes, I really want to",
+    "Yes, I helen ziomecki really want to",
+    "Yes, I helen ziomecki of Queen's University really want to be your valentine",
+    "Yes, I Helen Ziomecki, the Polish debate champion of Queen's University",
+    "Yes, I Helen Ziomecki, daughter of Yvonne and David, Polish debate champion, proud member of the Foreigns Cracking Indians Club, cougar who goes to Queen's University",
+    "YES, I want to because I am a cougar",
+    "YES, I WANT TO BECAUSE I AM A COUGAR 😤",
+    "YES. LOUDLY. PROUDLY. COUGAR."
+  ];
+
+  function reveal() {
+    stage1.classList.add("hidden");
+    stage2.classList.remove("hidden");
+    nahBtn.classList.remove("hidden");
+  }
+
+  function igSo() {
+    igBtn.classList.add("explode");
+    message.innerText = "nah nah nah 😐 enthusiastic yesses only";
+  }
+
+  function nah() {
+    const yesBtn = document.getElementById("yesBtn");
+
+    // slower growth
+    yesScale += 0.25;
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    const textIndex = Math.min(nahCount, yesTexts.length - 1);
+    yesBtn.innerText = yesTexts[textIndex];
+
+    nahCount++;
+
+    if (nahCount >= yesTexts.length) {
+      yesBtn.classList.add("fullscreen-yes");
+      yesBtn.innerText = "YES (this is destiny)";
+    }
+  }
+
+  function finalYes() {
+    stage2.classList.add("hidden");
+    nahBtn.classList.add("hidden");
+    stage3.classList.remove("hidden");
+    startCountdown();
+    startHearts();
+  }
+
+  function startCountdown() {
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 1, 15, 13, 16, 0);
+    if (now > target) target = new Date(now.getFullYear() + 1, 1, 15, 13, 16, 0);
+
+    setInterval(() => {
+      const diff = target - new Date();
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      countdown.innerText = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+  }
+
+  function startHearts() {
+    setInterval(() => {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerText = "❤️";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
+      heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 5000);
+    }, 200);
+  }
+</script>
+
+</body>
+</html>
